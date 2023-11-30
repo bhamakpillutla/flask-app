@@ -1,10 +1,23 @@
-from flask import Flask
+from flask import Flask, jsonify
+import time
 import logging
+
 app = Flask(__name__)
+
 @app.route('/')
-def home():
-    app.logger.info("This is a sample log statement that exceeds 200 bytes. " * 20)
-    return "Check logs for the generated log statement."
-if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
-    app.run(debug=True)
+def hello():
+    response = {
+            'message': 'Hello, world!',
+            'status': 'success'
+            }
+    # time.sleep(2) # Simulate a 2-second delay
+    app.logger.warning('A warning occurred')
+    app.logger.error('An error occurred')
+    app.logger.info('Info')
+    # Intentionally generate bad responses
+    response['message']= 'Internal Server Error'
+    response['status'] = 'error'
+    return jsonify(response), 500
+
+if __name__=='__main__':
+    app.run(debug=False,host='0.0.0.0', port = 7000)
